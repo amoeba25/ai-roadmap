@@ -29,7 +29,7 @@ export default function RoadmapVisualizer({ roadmap }: { roadmap: RoadmapData })
 
   const applyLayout = useCallback((nodes: Node[], edges: Edge[]) => {
     const g = new dagre.graphlib.Graph();
-    g.setGraph({ rankdir: "TB", nodesep: 80, ranksep: 100 }); // top to bottom
+    g.setGraph({ rankdir: "LR", nodesep: 80, ranksep: 200 }); 
     g.setDefaultEdgeLabel(() => ({}));
 
     nodes.forEach((n) => g.setNode(n.id, { width: 180, height: 60 }));
@@ -42,7 +42,6 @@ export default function RoadmapVisualizer({ roadmap }: { roadmap: RoadmapData })
     });
   }, []);
 
-  // ✅ Filter nodes based on selected level
   const filterByLevel = useCallback(
     (nodes: RoadmapNode[]) => {
       const levelPriority = ["basic", "intermediate", "expert"];
@@ -55,10 +54,11 @@ export default function RoadmapVisualizer({ roadmap }: { roadmap: RoadmapData })
 
   const buildTopLevel = useCallback(() => {
     const filteredNodes = filterByLevel(roadmap.nodes);
-    const baseNodes: Node[] = filteredNodes.map((node) => ({
+
+    const baseNodes: Node[] = filteredNodes.map((node, index) => ({
       id: node.id,
       data: { label: node.label },
-      position: { x: 0, y: 0 },
+      position: { x: 0, y: 0},
       style: {
         backgroundColor: primaryColor,
         color: "#fff",
@@ -174,7 +174,8 @@ export default function RoadmapVisualizer({ roadmap }: { roadmap: RoadmapData })
           onEdgesChange={onEdgesChange}
           onNodeClick={onNodeClick}
           fitView
-          nodesDraggable={false}
+          nodesDraggable={true}
+          nodesConnectable={false}
         >
           <Background />
           <MiniMap />

@@ -33,9 +33,8 @@ export default function HomePage() {
         setRoadmaps={setRoadmaps}
       />
       <main className="flex-1 p-6 space-y-6">
-        <PromptInput onNewRoadmap={handleNewRoadmap} />
+        <PromptInput onNewRoadmap={handleNewRoadmap} onSelectRoadmap={setSelectedTitle}/>
 
-        {/* 👇 Show JSON of selected roadmap */}
         {selectedRoadmap ? (
          <div>
             <h2 className="font-semibold mb-4 text-lg">{selectedRoadmap.title}</h2>
