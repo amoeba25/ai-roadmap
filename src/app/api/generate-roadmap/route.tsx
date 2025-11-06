@@ -3,6 +3,9 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
+/**
+ * Provides the model data safely 
+*/
 export async function POST(req: Request) {
   try {
     const { topic } = await req.json();
@@ -13,63 +16,63 @@ export async function POST(req: Request) {
     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
     const prompt = `
-Create a learning roadmap for the topic: "${topic}".
+      Create a learning roadmap for the topic: "${topic}".
 
-Return only JSON (no explanations or markdown). The JSON should have this structure:
+      Return only JSON (no explanations or markdown). The JSON should have this structure:
 
-{
-  "title": "Figma Roadmap",
-  "nodes": [
-    {
-      "id": "1",
-      "label": "Getting Started With Figma",
-      "level": "basic",
-      "children": [
-        {
-          "id": "1.1",
-          "label": "Understanding Figma Interface",
-          "level": "basic"
-        },
-        {
-          "id": "1.2",
-          "label": "Creating Your First Design",
-          "level": "basic"
-        }
-      ]
-    },
-    {
-      "id": "2",
-      "label": "Building Reusable Components",
-      "level": "intermediate",
-      "children": [
-        {
-          "id": "2.1",
-          "label": "Design System Foundations",
-          "level": "intermediate"
-        }
-      ]
-    },
-    {
-      "id": "3",
-      "label": "Advanced Prototyping",
-      "level": "expert"
-    }
-  ]
-}
+      {
+        "title": "Figma Roadmap",
+        "nodes": [
+          {
+            "id": "1",
+            "label": "Getting Started With Figma",
+            "level": "basic",
+            "children": [
+              {
+                "id": "1.1",
+                "label": "Understanding Figma Interface",
+                "level": "basic"
+              },
+              {
+                "id": "1.2",
+                "label": "Creating Your First Design",
+                "level": "basic"
+              }
+            ]
+          },
+          {
+            "id": "2",
+            "label": "Building Reusable Components",
+            "level": "intermediate",
+            "children": [
+              {
+                "id": "2.1",
+                "label": "Design System Foundations",
+                "level": "intermediate"
+              }
+            ]
+          },
+          {
+            "id": "3",
+            "label": "Advanced Prototyping",
+            "level": "expert"
+          }
+        ]
+      }
 
-Rules:
-- Each node must include "id", "label", and "level".
-- Levels can be one of: "basic", "intermediate", "expert".
-- Keep around 3–5 top-level nodes.
-- Add children (subtopics) under relevant nodes.
-- Return ONLY the JSON — no code blocks or text.
-`;
+      Rules:
+      - Each node must include "id", "label", and "level".
+      - Levels can be one of: "basic", "intermediate", "expert".
+      - Keep around 3–5 top-level nodes.
+      - Add children (subtopics) under relevant nodes.
+      - Return ONLY the JSON — no code blocks or text.
+      `;
 
 
     const result = await model.generateContent(prompt);
     const text = result.response.text();
 
-    // Try to safely parse JSON from model output
+    // parse the model data safely
     const jsonStart = text.indexOf("{");
     const jsonEnd = text.lastIndexOf("}");
     const jsonString = text.slice(jsonStart, jsonEnd + 1);
